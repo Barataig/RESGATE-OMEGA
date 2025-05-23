@@ -2,6 +2,7 @@ import heapq
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.patches as mpatches
 
 
 class Grafo:
@@ -65,7 +66,16 @@ class Grafo:
                 if not G.has_edge(origem, destino):
                     G.add_edge(origem, destino, weight=peso)
 
-        pos = nx.spring_layout(G, seed=42)
+        # Posições manuais
+        pos = {
+            'Praça Orlando de Barros Pimentel': (0, 0),
+            'RJ-106 (Rodovia Amaral Peixoto)': (2, 1),
+            'Rua Abreu Rangel': (1, -1),
+            'Hospital Conde Modesto Leal': (3, 0),
+            'Av. Roberto Silveira': (4, -1),
+            'UPA de Inoã': (6, -2)
+        }
+
         pesos = nx.get_edge_attributes(G, 'weight')
 
         fig, ax = plt.subplots(figsize=(10, 8))
@@ -86,8 +96,6 @@ class Grafo:
             nx.draw_networkx_edge_labels(G, pos, edge_labels=pesos, ax=ax)
             nx.draw_networkx_edges(G, pos, ax=ax)
 
-            
-
         # Contagem regressiva
         for i in range(3, 0, -1):
             ax.clear()
@@ -95,22 +103,21 @@ class Grafo:
                     fontsize=40, ha='center', va='center', color='red')
             plt.pause(1)
 
-
         def atualizar(frame):
             desenhar_mapa()
 
-            # Arestas percorridas até o momento
             if frame > 0:
                 subcaminho = [(caminho[i], caminho[i+1]) for i in range(frame) if i+1 < len(caminho)]
                 nx.draw_networkx_edges(G, pos, edgelist=subcaminho, edge_color='red', width=3, ax=ax)
 
-            # Nó atual da ambulância
             if frame < len(caminho):
                 ponto = caminho[frame]
                 x, y = pos[ponto]
-                ax.plot(x, y, 's', color='darkblue', markersize=20, label='Ambulância')
+                circulo_externo = mpatches.Circle((x, y), 0.1, color='red', zorder=10)
+                ax.add_patch(circulo_externo)
+                circulo_interno = mpatches.Circle((x, y), 0.05, color='white', zorder=11)
+                ax.add_patch(circulo_interno)
 
-            # Legenda no topo com fundo branco
             info_linha1 = f"Local atual: {caminho[frame] if frame < len(caminho) else caminho[-1]}"
             info_linha2 = f"Tempo estimado: {tempo_total} minutos"
             info_linha3 = f"Caminho restante: {' → '.join(caminho[frame:]) if frame < len(caminho) else 'Chegou ao destino'}"
@@ -122,14 +129,13 @@ class Grafo:
             ax.text(0.5, 0.98, info_linha3, transform=ax.transAxes,
                     fontsize=10, ha='center', va='top', bbox=dict(facecolor='white', alpha=0.8))
 
-        ani = animation.FuncAnimation(fig, atualizar, frames=len(caminho), interval=100, repeat=False)
+        ani = animation.FuncAnimation(fig, atualizar, frames=len(caminho), interval=2100, repeat=False)
         plt.show()
 
 
 # Criar grafo com nomes reais
 grafo = Grafo()
 
-# Adicionando locais reais de Maricá
 locais = [
     'Praça Orlando de Barros Pimentel',
     'RJ-106 (Rodovia Amaral Peixoto)',
@@ -142,7 +148,6 @@ locais = [
 for local in locais:
     grafo.adicionar_vertice(local)
 
-# Adicionando ruas com tempos médios (em minutos)
 grafo.adicionar_aresta('Praça Orlando de Barros Pimentel', 'RJ-106 (Rodovia Amaral Peixoto)', 4)
 grafo.adicionar_aresta('Praça Orlando de Barros Pimentel', 'Rua Abreu Rangel', 2)
 grafo.adicionar_aresta('RJ-106 (Rodovia Amaral Peixoto)', 'Rua Abreu Rangel', 1)
@@ -155,13 +160,10 @@ grafo.adicionar_aresta('Av. Roberto Silveira', 'UPA de Inoã', 3)
 ambulancia = 'Praça Orlando de Barros Pimentel'
 hospitais = ['Hospital Conde Modesto Leal', 'UPA de Inoã']
 
-
-# Calcular rota
 hospital, tempo_total, caminho = grafo.encontrar_hospital_mais_proximo(ambulancia, hospitais)
 
 print(f"Hospital mais próximo: {hospital}")
 print(f"Tempo estimado: {tempo_total} minutos")
 print(f"Caminho: {' -> '.join(caminho)}")
 
-# Anima a rota
 grafo.animar_rota(ambulancia, hospitais, caminho, tempo_total)

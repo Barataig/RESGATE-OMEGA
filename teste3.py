@@ -2,6 +2,7 @@ import heapq
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.patches as mpatches  
 
 
 class Grafo:
@@ -86,15 +87,12 @@ class Grafo:
             nx.draw_networkx_edge_labels(G, pos, edge_labels=pesos, ax=ax)
             nx.draw_networkx_edges(G, pos, ax=ax)
 
-            
-
         # Contagem regressiva
         for i in range(3, 0, -1):
             ax.clear()
             ax.text(0.5, 0.5, str(i), transform=ax.transAxes,
                     fontsize=40, ha='center', va='center', color='red')
             plt.pause(1)
-
 
         def atualizar(frame):
             desenhar_mapa()
@@ -104,11 +102,18 @@ class Grafo:
                 subcaminho = [(caminho[i], caminho[i+1]) for i in range(frame) if i+1 < len(caminho)]
                 nx.draw_networkx_edges(G, pos, edgelist=subcaminho, edge_color='red', width=3, ax=ax)
 
-            # Nó atual da ambulância
+            # Nó atual da ambulância com círculo vermelho e centro branco
             if frame < len(caminho):
                 ponto = caminho[frame]
                 x, y = pos[ponto]
-                ax.plot(x, y, 's', color='darkblue', markersize=20, label='Ambulância')
+
+                # Círculo externo (vermelho)
+                circulo_externo = mpatches.Circle((x, y), 0.05, color='red', zorder=10)
+                ax.add_patch(circulo_externo)
+
+                # Círculo interno (branco)
+                circulo_interno = mpatches.Circle((x, y), 0.025, color='white', zorder=11)
+                ax.add_patch(circulo_interno)
 
             # Legenda no topo com fundo branco
             info_linha1 = f"Local atual: {caminho[frame] if frame < len(caminho) else caminho[-1]}"
@@ -122,7 +127,7 @@ class Grafo:
             ax.text(0.5, 0.98, info_linha3, transform=ax.transAxes,
                     fontsize=10, ha='center', va='top', bbox=dict(facecolor='white', alpha=0.8))
 
-        ani = animation.FuncAnimation(fig, atualizar, frames=len(caminho), interval=100, repeat=False)
+        ani = animation.FuncAnimation(fig, atualizar, frames=len(caminho), interval=2000, repeat=False)
         plt.show()
 
 
@@ -154,7 +159,6 @@ grafo.adicionar_aresta('Av. Roberto Silveira', 'UPA de Inoã', 3)
 
 ambulancia = 'Praça Orlando de Barros Pimentel'
 hospitais = ['Hospital Conde Modesto Leal', 'UPA de Inoã']
-
 
 # Calcular rota
 hospital, tempo_total, caminho = grafo.encontrar_hospital_mais_proximo(ambulancia, hospitais)
