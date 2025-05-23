@@ -1,6 +1,8 @@
 import heapq
 import networkx as nx
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
 
 class Grafo:
     def __init__(self):
@@ -12,7 +14,7 @@ class Grafo:
 
     def adicionar_aresta(self, origem, destino, peso):
         self.adjacencias[origem].append((destino, peso))
-        self.adjacencias[destino].append((origem, peso))  # Grafo não direcionado
+        self.adjacencias[destino].append((origem, peso))
 
     def dijkstra(self, inicio):
         distancias = {no: float('inf') for no in self.adjacencias}
@@ -22,7 +24,6 @@ class Grafo:
 
         while fila:
             distancia_atual, no_atual = heapq.heappop(fila)
-
             if distancia_atual > distancias[no_atual]:
                 continue
 
@@ -57,48 +58,71 @@ class Grafo:
 
         return hospital_mais_proximo, menor_tempo, melhor_caminho
 
-    def desenhar_grafo(self, ambulancia, hospitais, caminho):
+    def animar_rota(self, ambulancia, hospitais, caminho):
         G = nx.Graph()
-
-        # Adiciona nós e arestas no grafo do networkx
         for origem, vizinhos in self.adjacencias.items():
             for destino, peso in vizinhos:
                 if not G.has_edge(origem, destino):
                     G.add_edge(origem, destino, weight=peso)
 
-        pos = nx.spring_layout(G, seed=42)  # Layout dos nós (posição automática)
+        pos = nx.spring_layout(G, seed=42)
         pesos = nx.get_edge_attributes(G, 'weight')
 
-        # Cores dos nós
-        cor_nos = []
-        for no in G.nodes():
-            if no == ambulancia:
-                cor_nos.append('orange')
-            elif no in hospitais:
-                cor_nos.append('green')
-            else:
-                cor_nos.append('lightblue')
+        fig, ax = plt.subplots(figsize=(8, 6))
 
-        # Desenha o grafo
-        nx.draw(G, pos, with_labels=True, node_color=cor_nos, node_size=800, font_weight='bold')
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=pesos)
+        def desenhar_mapa():
+            ax.clear()
+            # Cor dos nós
+            cor_nos = []
+            for no in G.nodes():
+                if no == ambulancia:
+                    cor_nos.append('yellow')
+                elif no in hospitais:
+                    cor_nos.append('green')
+                else:
+                    cor_nos.append('lightblue')
 
-        # Destacar o caminho mais curto
-        if caminho and len(caminho) > 1:
-            caminho_arestas = [(caminho[i], caminho[i + 1]) for i in range(len(caminho) - 1)]
-            nx.draw_networkx_edges(G, pos, edgelist=caminho_arestas, edge_color='red', width=3)
+            nx.draw(G, pos, with_labels=True, node_color=cor_nos, node_size=800, ax=ax)
+            nx.draw_networkx_edge_labels(G, pos, edge_labels=pesos, ax=ax)
+            nx.draw_networkx_edges(G, pos, ax=ax)
 
-        plt.title("Mapa da cidade com rota da ambulância")
+        # Contagem regressiva
+        for i in range(3, 0, -1):
+            ax.clear()
+            desenhar_mapa()
+            ax.text(0.5, 0.5, str(i), transform=ax.transAxes,
+                    fontsize=40, ha='center', va='center', color='red')
+            plt.pause(1)
+
+        # Animação do ponto (ambulância) no caminho
+        def atualizar(frame):
+            ax.clear()
+            desenhar_mapa()
+
+            # Desenha a ambulância no ponto atual do caminho
+            if frame < len(caminho):
+                ponto = caminho[frame]
+                x, y = pos[ponto]
+                ax.plot(x, y, 'o', color='red', markersize=20, label='Ambulância')
+                ax.legend(loc='upper left')
+
+            # Destacar caminho já percorrido
+            if frame > 0:
+                subcaminho = [(caminho[i], caminho[i+1]) for i in range(frame) if i+1 < len(caminho)]
+                nx.draw_networkx_edges(G, pos, edgelist=subcaminho, edge_color='red', width=3, ax=ax)
+
+            ax.set_title("Ambulância em movimento")
+
+        ani = animation.FuncAnimation(fig, atualizar, frames=len(caminho), interval=1000, repeat=False)
         plt.show()
 
-# Criando o grafo urbano
 grafo = Grafo()
 
-# Adicionando vértices
+# Adicionando cruzamentos
 for v in ['A', 'B', 'C', 'D', 'E', 'F']:
     grafo.adicionar_vertice(v)
 
-# Adicionando ruas (arestas) com tempos médios de percurso
+# Adicionando ruas
 grafo.adicionar_aresta('A', 'B', 4)
 grafo.adicionar_aresta('A', 'C', 2)
 grafo.adicionar_aresta('B', 'C', 1)
@@ -108,17 +132,15 @@ grafo.adicionar_aresta('C', 'E', 10)
 grafo.adicionar_aresta('D', 'E', 2)
 grafo.adicionar_aresta('E', 'F', 3)
 
-# Definindo posição da ambulância e os hospitais
 ambulancia = 'A'
 hospitais = ['D', 'F']
 
-# Encontrar hospital mais próximo
+# Calcula o caminho
 hospital, tempo, caminho = grafo.encontrar_hospital_mais_proximo(ambulancia, hospitais)
 
-# Mostrar resultados
 print(f"Hospital mais próximo: {hospital}")
 print(f"Tempo estimado: {tempo} minutos")
 print(f"Caminho: {' -> '.join(caminho)}")
 
-# Desenhar o grafo com destaque da rota
-grafo.desenhar_grafo(ambulancia, hospitais, caminho)
+# Anima a rota
+grafo.animar_rota(ambulancia, hospitais, caminho)
