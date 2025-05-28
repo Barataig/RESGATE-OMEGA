@@ -115,8 +115,7 @@ class Grafo:
                 x, y = pos[ponto]
                 circulo_externo = mpatches.Circle((x, y), 0.1, color='red', zorder=10)
                 ax.add_patch(circulo_externo)
-                circulo_interno = mpatches.Circle((x, y), 0.05, color='white', zorder=11)
-                ax.add_patch(circulo_interno)
+                
 
             info_linha1 = f"Local atual: {caminho[frame] if frame < len(caminho) else caminho[-1]}"
             info_linha2 = f"Tempo estimado: {tempo_total} minutos"
