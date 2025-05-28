@@ -69,7 +69,7 @@ class Grafo:
         # Posições manuais
         pos = {
             'Praça Orlando de Barros Pimentel': (0, 0),
-            'RJ-106 (Rodovia Amaral Peixoto)': (2, 1),
+            'RJ-106 (Rodovia Amaral Peixoto)': (2, 0.8),
             'Rua Abreu Rangel': (1, -1),
             'Hospital Conde Modesto Leal': (3, 0),
             'Av. Roberto Silveira': (4, -1),
