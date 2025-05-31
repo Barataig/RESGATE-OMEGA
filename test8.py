@@ -68,8 +68,8 @@ class Grafo:
                     G.add_edge(origem, destino, weight=peso)
 
         pos = {
-            'Praça Orlando de Barros Pimentel': (0, 0),
-            'RJ-106 (Rodovia Amaral Peixoto)': (2, 0.8),
+            'Praça Orlando de Barros Pimentel': (1, 1),
+            'RJ-106 (Rodovia Amaral Peixoto)': (4.5, 2),
             'Rua Abreu Rangel': (1, -1),
             'Hospital Conde Modesto Leal': (3, 0),
             'Av. Roberto Silveira': (4, -1),
