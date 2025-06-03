@@ -68,12 +68,12 @@ class Grafo:
                     G.add_edge(origem, destino, weight=peso)
 
         pos = {
-            'Praça Orlando de Barros Pimentel': (1, 1),
-            'RJ-106 (Rodovia Amaral Peixoto)': (4.5, 2),
-            'Rua Abreu Rangel': (1, -1),
-            'Hospital Conde Modesto Leal': (4.5, 0.5),
-            'Av. Roberto Silveira': (4, -1),
-            'UPA de Inoã': (6, -2)
+            'Praça Orlando de Barros Pimentel': (0.55, 0.64), 
+            'RJ-106 (Rodovia Amaral Peixoto)': (3.50, 1.75), 
+            'Rua Abreu Rangel': (0.34, -0.83), 
+            'Hospital Conde Modesto Leal': (5.30, 1.40),
+            'Av. Roberto Silveira': (3.50, 0.24), 
+            'UPA de Inoã': (1.50, -1.70) 
         }
 
         pesos = nx.get_edge_attributes(G, 'weight')
