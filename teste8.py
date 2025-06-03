@@ -71,7 +71,7 @@ class Grafo:
             'Praça Orlando de Barros Pimentel': (1, 1),
             'RJ-106 (Rodovia Amaral Peixoto)': (4.5, 2),
             'Rua Abreu Rangel': (1, -1),
-            'Hospital Conde Modesto Leal': (3, 0),
+            'Hospital Conde Modesto Leal': (4.5, 0.5),
             'Av. Roberto Silveira': (4, -1),
             'UPA de Inoã': (6, -2)
         }
