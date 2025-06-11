@@ -18,7 +18,6 @@ Este projeto demonstra, de forma didática, como usar o **Algoritmo de Dijkstra*
 |------------|------------|--------|
 | `networkx` | `pip install networkx` | Estrutura de grafo |
 | `matplotlib` | `pip install matplotlib` | Visualização & animação |
-| `pillow` | `pip install pillow` | Carregamento da imagem do mapa |
 | `tkinter` | embutido na distribuição standard do Python (em Linux pode requerer `python3-tk`) | Interface gráfica |
 
 Arquivo _recomendado_ `requirements.txt`:
@@ -31,12 +30,12 @@ pillow>=10.0
 ## Instalação passo‑a‑passo
 ```bash
 # 1) clone ou baixe este repositório
-$ git clone https://github.com/<seu-usuario>/ambulancia-marica.git
-$ cd ambulancia-marica
+# git clone https://github.com/<seu-usuario>/RESGATE-OMEGA.git
+# cd RESGATE-OMEGA
 
 # 2) crie ambiente virtual (opcional, mas recomendado)
-$ python -m venv venv
-$ source venv/bin/activate   # Windows: venv\Scripts\activate
+# python -m venv venv
+# source venv/bin/activate   # Windows: venv\Scripts\activate
 
 # 3) instale dependências
 (venv)$ pip install -r requirements.txt
